@@ -12,19 +12,33 @@ All installers live on the [Releases page](https://github.com/Shawnchee/claude-p
 
 ### macOS
 
-Download `Claude Pomodoro-0.1.0-arm64.dmg` from the Releases page.
+Apple Silicon (M1/M2/M3/M4) only. Intel Macs can run it under Rosetta or wait for a future universal build.
 
-> Apple Silicon (M1/M2/M3/M4) only. Intel Macs can run it under Rosetta or wait for a future universal build.
+**Option A — Homebrew (recommended)**
 
-1. Open the `.dmg`.
-2. Drag **Claude Pomodoro** into **Applications**.
-3. Launch it the first time by right-clicking the app in Applications and choosing **Open**, then confirm in the dialog. After that it opens normally from Launchpad/Spotlight.
+```bash
+brew install --cask shawnchee/claude-pomodoro/claude-pomodoro
+xattr -d com.apple.quarantine "/Applications/Claude Pomodoro.app"
+open -a "Claude Pomodoro"
+```
 
-If you double-click instead and see *"Apple could not verify… is free of malware"*, dismiss it and use the right-click → Open path above.
+The `xattr` line strips the quarantine flag that triggers macOS Gatekeeper. One-time per install. Updates come via `brew upgrade --cask claude-pomodoro`.
+
+**Option B — Direct download**
+
+1. Download the latest `Claude-Pomodoro-*-arm64.dmg` from the [Releases page](https://github.com/Shawnchee/claude-pomodoro/releases/latest).
+2. Open the `.dmg` and drag **Claude Pomodoro** into **Applications**.
+3. The first time you launch it, macOS shows *"Apple could not verify 'Claude Pomodoro' is free of malware."* This is expected — the app is unsigned. To clear it:
+   - Open **System Settings → Privacy & Security**
+   - Scroll to the Security section, click **Open Anyway** next to the blocked app
+   - Re-launch and confirm in the dialog
+4. After this, it opens normally from Launchpad/Spotlight forever.
+
+Either path produces the same `.app` — option A just spares you the System Settings dance.
 
 ### Windows
 
-Download `Claude-Pomodoro-Setup-0.1.0.exe` from the Releases page (x64).
+Download the latest `Claude-Pomodoro-Setup-*.exe` from the [Releases page](https://github.com/Shawnchee/claude-pomodoro/releases/latest) (x64).
 
 1. Run the installer.
 2. When Windows SmartScreen shows *"Windows protected your PC"*, click **More info** → **Run anyway**.
@@ -34,11 +48,11 @@ The app will appear in your Start menu as **Claude Pomodoro**.
 
 ### Linux
 
-Download `Claude Pomodoro-0.1.0.AppImage` from the Releases page (x64).
+Download the latest `Claude-Pomodoro-*.AppImage` from the [Releases page](https://github.com/Shawnchee/claude-pomodoro/releases/latest) (x64).
 
 ```bash
-chmod +x "Claude Pomodoro-0.1.0.AppImage"
-./"Claude Pomodoro-0.1.0.AppImage"
+chmod +x Claude-Pomodoro-*.AppImage
+./Claude-Pomodoro-*.AppImage
 ```
 
 No security prompt — AppImages run as the executing user. To integrate it into your application menu, use a tool like [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher).
@@ -77,7 +91,10 @@ Output goes to `dist/`.
 
 ## Tech stack
 
-[Electron](https://www.electronjs.org/) + plain HTML/CSS/JS, packaged with [electron-builder](https://www.electron.build/).
+- **macOS:** native [SwiftUI](https://developer.apple.com/xcode/swiftui/) app under `mac-native/`. Built with Swift Package Manager. Ships as a ~700KB `.app`.
+- **Windows & Linux:** [Electron](https://www.electronjs.org/) + plain HTML/CSS/JS, packaged with [electron-builder](https://www.electron.build/). Ships as ~80–110MB installers.
+
+Both builds render the same UI (cream + orange pixel-art, ~280×380 floating window) and ship from this repo on every `v*` tag push. macOS users can also install via the [Homebrew tap](https://github.com/Shawnchee/homebrew-claude-pomodoro).
 
 ## License
 
