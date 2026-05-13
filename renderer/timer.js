@@ -7,12 +7,14 @@ const startBtn = document.getElementById('start');
 const resetBtn = document.getElementById('reset');
 const sessionsEl = document.getElementById('sessions');
 const mascot = document.getElementById('mascot');
+const pinBtn = document.getElementById('pin');
 
 let phase = 'work';
 let secondsLeft = WORK_SECONDS;
 let running = false;
 let intervalId = null;
 let sessions = 0;
+let pinned = true;
 
 function format(s) {
   const m = Math.floor(s / 60).toString().padStart(2, '0');
@@ -64,8 +66,17 @@ function reset() {
   render();
 }
 
+function togglePin() {
+  pinned = !pinned;
+  pinBtn.classList.toggle('pinned', pinned);
+  pinBtn.textContent = pinned ? 'pinned' : 'pin';
+  pinBtn.title = pinned ? 'Currently always on top — click to unpin' : 'Click to pin always on top';
+  window.api?.setAlwaysOnTop(pinned);
+}
+
 startBtn.addEventListener('click', start);
 resetBtn.addEventListener('click', reset);
+pinBtn.addEventListener('click', togglePin);
 document.getElementById('close').addEventListener('click', () => window.api?.closeWindow());
 document.getElementById('minimize').addEventListener('click', () => window.api?.minimizeWindow());
 

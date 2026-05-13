@@ -66,6 +66,22 @@ body {
   background: rgba(217, 119, 87, 0.15);
 }
 
+#pin {
+  width: auto;
+  padding: 0 6px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+  opacity: 0.45;
+}
+
+#pin.pinned {
+  opacity: 1;
+  background: rgba(217, 119, 87, 0.18);
+  color: #d97757;
+}
+
 .mascot-wrap {
   width: 140px;
   height: 140px;

@@ -37,6 +37,9 @@ app.on('window-all-closed', () => {
 
 ipcMain.on('window:close', () => mainWindow?.close());
 ipcMain.on('window:minimize', () => mainWindow?.minimize());
+ipcMain.on('window:setAlwaysOnTop', (_event, flag) => {
+  mainWindow?.setAlwaysOnTop(!!flag);
+});
 
 ipcMain.on('notify', (_event, { title, body }) => {
   if (Notification.isSupported()) {
