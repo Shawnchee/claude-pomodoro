@@ -117,6 +117,67 @@ body {
   margin-bottom: 10px;
 }
 
+.durations {
+  -webkit-app-region: no-drag;
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.dur-btn {
+  padding: 3px 8px;
+  border: 1.5px solid #d97757;
+  background: #fdf6ec;
+  color: #d97757;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.dur-btn:hover:not(:disabled) {
+  background: rgba(217, 119, 87, 0.12);
+}
+
+.dur-btn.active {
+  background: #d97757;
+  color: #fdf6ec;
+}
+
+.dur-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dur-input {
+  width: 60px;
+  padding: 3px 6px;
+  border: 1.5px solid #d97757;
+  background: #fdf6ec;
+  color: #d97757;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  text-align: center;
+  outline: none;
+}
+
+.dur-input::placeholder {
+  color: #d97757;
+  opacity: 0.5;
+}
+
+.dur-input:focus {
+  background: #fff;
+}
+
+.dur-input:disabled {
+  opacity: 0.4;
+}
+
 .buttons {
   display: flex;
   gap: 8px;
