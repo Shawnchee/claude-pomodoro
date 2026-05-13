@@ -1,0 +1,15 @@
+{
+  "name": "claude-pomodoro",
+  "version": "0.1.0",
+  "description": "A cute pixel-art Claude mascot pomodoro timer for Windows, macOS, and Linux.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Shawn Chee",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^33.0.0"
+  }
+}
