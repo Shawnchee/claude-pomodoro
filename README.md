@@ -1,6 +1,6 @@
-# 🍅 Claude Pomodoro
+# Claude Pomodoro
 
-A cute pixel-art pomodoro timer that lives in a floating always-on-top window. Cross-platform: **macOS · Windows · Linux**.
+A cute pixel-art pomodoro timer that lives in a floating always-on-top window. Cross-platform: macOS, Windows, Linux.
 
 <p align="center">
   <img src="build/icon.png" alt="Claude Pomodoro icon" width="160" />
@@ -8,21 +8,40 @@ A cute pixel-art pomodoro timer that lives in a floating always-on-top window. C
 
 ## Download
 
-Grab the latest installer for your OS from the [Releases page](https://github.com/Shawnchee/claude-pomodoro/releases/latest):
+All installers live on the [Releases page](https://github.com/Shawnchee/claude-pomodoro/releases/latest). The app is unsigned on every platform, so expect a one-time security warning on first launch — workarounds are inline below.
 
-| OS      | File                            | How to install |
-| ------- | ------------------------------- | -------------- |
-| macOS   | `Claude-Pomodoro-*.dmg`         | Open the `.dmg`, drag the app to **Applications** |
-| Windows | `Claude-Pomodoro-Setup-*.exe`   | Run the installer, follow the wizard |
-| Linux   | `Claude-Pomodoro-*.AppImage`    | `chmod +x` the file, then double-click |
+### macOS
 
-### First-launch warnings (unsigned app)
+Download `Claude Pomodoro-0.1.0-arm64.dmg` from the Releases page.
 
-Because the app isn't code-signed yet, your OS will show a one-time security dialog. This is normal for indie apps; here's how to get past it:
+> Apple Silicon (M1/M2/M3/M4) only. Intel Macs can run it under Rosetta or wait for a future universal build.
 
-- **macOS:** right-click the app → **Open** → confirm in the dialog. After the first run it'll open normally.
-- **Windows:** click **More info** → **Run anyway** on the SmartScreen screen.
-- **Linux:** no warning, just runs.
+1. Open the `.dmg`.
+2. Drag **Claude Pomodoro** into **Applications**.
+3. Launch it the first time by right-clicking the app in Applications and choosing **Open**, then confirm in the dialog. After that it opens normally from Launchpad/Spotlight.
+
+If you double-click instead and see *"Apple could not verify… is free of malware"*, dismiss it and use the right-click → Open path above.
+
+### Windows
+
+Download `Claude-Pomodoro-Setup-0.1.0.exe` from the Releases page (x64).
+
+1. Run the installer.
+2. When Windows SmartScreen shows *"Windows protected your PC"*, click **More info** → **Run anyway**.
+3. Follow the installer wizard.
+
+The app will appear in your Start menu as **Claude Pomodoro**.
+
+### Linux
+
+Download `Claude Pomodoro-0.1.0.AppImage` from the Releases page (x64).
+
+```bash
+chmod +x "Claude Pomodoro-0.1.0.AppImage"
+./"Claude Pomodoro-0.1.0.AppImage"
+```
+
+No security prompt — AppImages run as the executing user. To integrate it into your application menu, use a tool like [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher).
 
 ## Features (v0.1)
 
@@ -35,7 +54,7 @@ Because the app isn't code-signed yet, your OS will show a one-time security dia
 
 ## Development
 
-If you want to hack on it or build from source:
+Run from source:
 
 ```bash
 git clone https://github.com/Shawnchee/claude-pomodoro.git
