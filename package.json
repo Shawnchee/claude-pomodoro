@@ -39,7 +39,7 @@
     ],
     "mac": {
       "target": [
-        { "target": "dmg", "arch": ["x64", "arm64"] }
+        { "target": "dmg", "arch": ["arm64"] }
       ],
       "icon": "build/icon.png",
       "category": "public.app-category.productivity"
@@ -55,7 +55,9 @@
       "createStartMenuShortcut": true
     },
     "linux": {
-      "target": "AppImage",
+      "target": [
+        { "target": "AppImage", "arch": ["x64"] }
+      ],
       "icon": "build/icon.png",
       "category": "Utility"
     }
