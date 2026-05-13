@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>body { margin: 0; background: transparent; }</style>
+</head>
+<body>
+<canvas id="c" width="1024" height="1024"></canvas>
+<img id="mascot" src="../assets/done.gif" style="display:none">
+<script>
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const mascot = document.getElementById('mascot');
+
+  function findBoundingBox(img) {
+    // Draw native-size to offscreen canvas, find non-transparent bbox
+    const off = document.createElement('canvas');
+    off.width = img.naturalWidth;
+    off.height = img.naturalHeight;
+    const octx = off.getContext('2d');
+    octx.drawImage(img, 0, 0);
+    const data = octx.getImageData(0, 0, off.width, off.height).data;
+
+    let minX = off.width, minY = off.height, maxX = 0, maxY = 0;
+    for (let y = 0; y < off.height; y++) {
+      for (let x = 0; x < off.width; x++) {
+        const a = data[(y * off.width + x) * 4 + 3];
+        if (a > 10) {
+          if (x < minX) minX = x;
+          if (y < minY) minY = y;
+          if (x > maxX) maxX = x;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    return { x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 };
+  }
+
+  function draw() {
+    // Cream rounded-square background
+    ctx.fillStyle = '#fdf6ec';
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 1024, 1024, 180);
+    ctx.fill();
+
+    // Orange border (inset)
+    ctx.strokeStyle = '#d97757';
+    ctx.lineWidth = 40;
+    ctx.beginPath();
+    ctx.roundRect(20, 20, 984, 984, 160);
+    ctx.stroke();
+
+    // Crop mascot to its bounding box, then scale to fill ~70% of icon
+    const bbox = findBoundingBox(mascot);
+    const targetMax = 660;
+    const scale = targetMax / Math.max(bbox.w, bbox.h);
+    const drawW = bbox.w * scale;
+    const drawH = bbox.h * scale;
+    const dx = (1024 - drawW) / 2;
+    const dy = (1024 - drawH) / 2;
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(mascot, bbox.x, bbox.y, bbox.w, bbox.h, dx, dy, drawW, drawH);
+
+    window._ready = true;
+  }
+
+  if (mascot.complete && mascot.naturalWidth > 0) {
+    draw();
+  } else {
+    mascot.onload = draw;
+    mascot.onerror = () => { window._error = 'failed to load mascot'; };
+  }
+</script>
+</body>
+</html>
