@@ -56,12 +56,18 @@ jobs:
           cp "$BUILD_DIR/ClaudePomodoro" "$MACOS_DIR/ClaudePomodoro"
           chmod +x "$MACOS_DIR/ClaudePomodoro"
 
-          # Copy the SPM-generated resource bundle (contains work.gif/done.gif)
-          # SPM emits a directory like ClaudePomodoro_ClaudePomodoro.bundle
+          # Copy the SPM-generated resource bundle (contains work.gif/done.gif).
+          # SPM emits ClaudePomodoro_ClaudePomodoro.bundle. For executable targets,
+          # the Swift-generated Bundle.module accessor looks for this bundle at
+          # Bundle.main.bundleURL — which for a .app is the .app root itself, NOT
+          # Contents/Resources/. Placing it in Resources/ produces a runtime
+          # fatalError on first load. Confirmed against the generated accessor:
+          #   let mainPath = Bundle.main.bundleURL.appendingPathComponent(...)
           if ls "$BUILD_DIR"/*.bundle >/dev/null 2>&1; then
-            cp -R "$BUILD_DIR"/*.bundle "$RES_DIR/"
+            cp -R "$BUILD_DIR"/*.bundle "$APP_DIR/"
           else
             echo "WARNING: no SPM resource bundle found in $BUILD_DIR" >&2
+            exit 1
           fi
 
           # Write Info.plist
