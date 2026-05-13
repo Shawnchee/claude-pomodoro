@@ -9,13 +9,133 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    name: Build (${{ matrix.os }})
+  build-mac-native:
+    name: Build macOS (SwiftUI native)
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Build SwiftUI app (release, arm64)
+        working-directory: mac-native
+        run: swift build -c release --arch arm64
+
+      - name: Assemble .app bundle
+        working-directory: mac-native
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          APP_NAME="Claude Pomodoro"
+          BUNDLE_ID="com.shawnchee.claudepomodoro"
+          BUILD_DIR=".build/arm64-apple-macosx/release"
+          APP_DIR="build/${APP_NAME}.app"
+          CONTENTS="$APP_DIR/Contents"
+          MACOS_DIR="$CONTENTS/MacOS"
+          RES_DIR="$CONTENTS/Resources"
+
+          rm -rf build
+          mkdir -p "$MACOS_DIR" "$RES_DIR"
+
+          # Copy the executable
+          cp "$BUILD_DIR/ClaudePomodoro" "$MACOS_DIR/ClaudePomodoro"
+          chmod +x "$MACOS_DIR/ClaudePomodoro"
+
+          # Copy the SPM-generated resource bundle (contains work.gif/done.gif)
+          # SPM emits a directory like ClaudePomodoro_ClaudePomodoro.bundle
+          if ls "$BUILD_DIR"/*.bundle >/dev/null 2>&1; then
+            cp -R "$BUILD_DIR"/*.bundle "$RES_DIR/"
+          else
+            echo "WARNING: no SPM resource bundle found in $BUILD_DIR" >&2
+          fi
+
+          # Write Info.plist
+          cat > "$CONTENTS/Info.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleDevelopmentRegion</key>
+            <string>en</string>
+            <key>CFBundleExecutable</key>
+            <string>ClaudePomodoro</string>
+            <key>CFBundleIdentifier</key>
+            <string>${BUNDLE_ID}</string>
+            <key>CFBundleInfoDictionaryVersion</key>
+            <string>6.0</string>
+            <key>CFBundleName</key>
+            <string>${APP_NAME}</string>
+            <key>CFBundleDisplayName</key>
+            <string>${APP_NAME}</string>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+            <key>CFBundleShortVersionString</key>
+            <string>${VERSION}</string>
+            <key>CFBundleVersion</key>
+            <string>${VERSION}</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>13.0</string>
+            <key>LSApplicationCategoryType</key>
+            <string>public.app-category.productivity</string>
+            <key>NSHighResolutionCapable</key>
+            <true/>
+            <key>NSUserNotificationsUsageDescription</key>
+            <string>Claude Pomodoro sends notifications when a work or break session ends.</string>
+          </dict>
+          </plist>
+          PLIST
+
+          # Ad-hoc sign so Gatekeeper at least recognizes a valid signature
+          codesign -s - --deep --force --timestamp=none "$APP_DIR"
+
+          # Sanity check
+          codesign --verify --verbose "$APP_DIR" || true
+          ls -la "$APP_DIR/Contents"
+
+      - name: Create DMG
+        working-directory: mac-native
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          hdiutil create \
+            -volname "Claude Pomodoro" \
+            -srcfolder "build/Claude Pomodoro.app" \
+            -ov \
+            -format UDZO \
+            "dist/Claude-Pomodoro-${VERSION}-arm64.dmg"
+          ls -la dist
+
+      - name: Upload macOS DMG to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mac-native/dist/*.dmg
+          fail_on_unmatched_files: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-electron:
+    name: Build Electron (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout
@@ -39,7 +159,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/*.dmg
             dist/*.exe
             dist/*.AppImage
           fail_on_unmatched_files: false
