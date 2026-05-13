@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+    <title>Claude Pomodoro</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="card">
+      <div class="titlebar">
+        <span class="title">claude pomodoro</span>
+        <div class="window-controls">
+          <button id="minimize" class="ctrl" title="Minimize">–</button>
+          <button id="close" class="ctrl" title="Close">×</button>
+        </div>
+      </div>
+
+      <div class="mascot-wrap">
+        <img id="mascot" src="../assets/done.gif" alt="claude mascot" />
+      </div>
+
+      <div class="phase" id="phase">ready</div>
+      <div class="timer" id="timer">25:00</div>
+
+      <div class="buttons">
+        <button id="start" class="btn primary">start</button>
+        <button id="reset" class="btn">reset</button>
+      </div>
+
+      <div class="sessions">sessions: <span id="sessions">0</span></div>
+    </div>
+
+    <script src="timer.js"></script>
+  </body>
+</html>
