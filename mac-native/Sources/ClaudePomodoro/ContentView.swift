@@ -82,6 +82,7 @@ struct ContentView: View {
     private var durations: some View {
         HStack(spacing: 4) {
             ForEach([5, 15, 25], id: \.self) { min in
+                let isActive = model.selectedPreset == min
                 Button("\(min)") {
                     guard !model.running else { return }
                     customInput = ""
@@ -89,35 +90,44 @@ struct ContentView: View {
                 }
                 .buttonStyle(.plain)
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(model.selectedPreset == min ? cream : orange)
+                .foregroundColor(isActive ? cream : orange)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 3)
-                .background(model.selectedPreset == min ? orange : cream)
+                .background(isActive ? orange : cream)
                 .overlay(
                     RoundedRectangle(cornerRadius: 6)
                         .stroke(orange, lineWidth: 1.5)
                 )
-                .opacity(model.running ? 0.4 : 1.0)
+                .opacity(model.running ? (isActive ? 0.7 : 0.4) : 1.0)
                 .disabled(model.running)
             }
-            TextField("min", text: $customInput)
-                .textFieldStyle(.plain)
-                .multilineTextAlignment(.center)
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(orange)
-                .frame(width: 60, height: 22)
-                .background(cream)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(orange, lineWidth: 1.5)
-                )
-                .disabled(model.running)
-                .onChange(of: customInput) { newValue in
-                    guard !model.running else { return }
-                    if let n = Int(newValue), (1...180).contains(n) {
-                        model.setWorkMinutes(n, fromPreset: false)
-                    }
+            ZStack {
+                if customInput.isEmpty {
+                    Text("min")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(orange.opacity(0.5))
+                        .allowsHitTesting(false)
                 }
+                TextField("", text: $customInput)
+                    .textFieldStyle(.plain)
+                    .multilineTextAlignment(.center)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(orange)
+            }
+            .frame(width: 60, height: 22)
+            .background(cream)
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .stroke(orange, lineWidth: 1.5)
+            )
+            .opacity(model.running ? 0.4 : 1.0)
+            .disabled(model.running)
+            .onChange(of: customInput) { newValue in
+                guard !model.running else { return }
+                if let n = Int(newValue), (1...180).contains(n) {
+                    model.setWorkMinutes(n, fromPreset: false)
+                }
+            }
         }
         .padding(.bottom, 8)
     }
