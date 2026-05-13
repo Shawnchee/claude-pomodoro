@@ -4,12 +4,60 @@
   "description": "A cute pixel-art Claude mascot pomodoro timer for Windows, macOS, and Linux.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "icon": "./node_modules/.bin/electron scripts/make-icon.js",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux"
   },
   "author": "Shawn Chee",
   "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
-    "electron": "^33.0.0"
+    "electron": "^33.4.11",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.shawnchee.claudepomodoro",
+    "productName": "Claude Pomodoro",
+    "copyright": "Copyright © 2026 Shawn Chee",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "assets/**/*",
+      "package.json",
+      "!build/make-icon.html",
+      "!scripts/**/*",
+      "!learn-electron/**/*",
+      "!LEARN_ELECTRON.md"
+    ],
+    "mac": {
+      "target": [
+        { "target": "dmg", "arch": ["x64", "arm64"] }
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "build/icon.png",
+      "category": "Utility"
+    }
   }
 }
