@@ -6,3 +6,4 @@ out/
 .env
 .env.local
 learn-electron/
+HANDOFF.md
