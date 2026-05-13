@@ -1,6 +1,6 @@
 {
   "name": "claude-pomodoro",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A cute pixel-art Claude mascot pomodoro timer for Windows, macOS, and Linux.",
   "main": "main.js",
   "scripts": {

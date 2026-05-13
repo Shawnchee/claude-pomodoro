@@ -56,15 +56,14 @@ jobs:
           cp "$BUILD_DIR/ClaudePomodoro" "$MACOS_DIR/ClaudePomodoro"
           chmod +x "$MACOS_DIR/ClaudePomodoro"
 
-          # Copy the SPM-generated resource bundle (contains work.gif/done.gif).
-          # SPM emits ClaudePomodoro_ClaudePomodoro.bundle. For executable targets,
-          # the Swift-generated Bundle.module accessor looks for this bundle at
-          # Bundle.main.bundleURL — which for a .app is the .app root itself, NOT
-          # Contents/Resources/. Placing it in Resources/ produces a runtime
-          # fatalError on first load. Confirmed against the generated accessor:
-          #   let mainPath = Bundle.main.bundleURL.appendingPathComponent(...)
+          # Copy the SPM-generated resource bundle to Contents/Resources/
+          # (the standard macOS location). The app source overrides
+          # Bundle.module via AnimatedGIFView.resourceBundle to look here
+          # first, then fall back to the .app root for SPM compatibility.
+          # Putting it under Contents/ also lets codesign --deep seal the
+          # whole bundle cleanly.
           if ls "$BUILD_DIR"/*.bundle >/dev/null 2>&1; then
-            cp -R "$BUILD_DIR"/*.bundle "$APP_DIR/"
+            cp -R "$BUILD_DIR"/*.bundle "$RES_DIR/"
           else
             echo "WARNING: no SPM resource bundle found in $BUILD_DIR" >&2
             exit 1
@@ -106,18 +105,13 @@ jobs:
           </plist>
           PLIST
 
-          # Sign only the executable, not the whole bundle.
-          # --deep would refuse with "unsealed contents present in the bundle root"
-          # because the SPM resource bundle sits at the .app root (where
-          # Bundle.module looks) rather than under Contents/. Signing just the
-          # mach-o binary gives us an ad-hoc signature for Gatekeeper without
-          # requiring the bundle as a whole to be sealed.
-          codesign -s - --force --timestamp=none "$APP_DIR/Contents/MacOS/ClaudePomodoro"
+          # Ad-hoc seal the whole bundle. Works now because all content is
+          # under Contents/ (resource bundle is in Contents/Resources/).
+          codesign -s - --deep --force --timestamp=none "$APP_DIR"
 
           # Sanity check
-          codesign --verify --verbose "$APP_DIR/Contents/MacOS/ClaudePomodoro" || true
+          codesign --verify --verbose "$APP_DIR" || true
           ls -la "$APP_DIR/Contents"
-          ls -la "$APP_DIR"
 
       - name: Create DMG
         working-directory: mac-native
