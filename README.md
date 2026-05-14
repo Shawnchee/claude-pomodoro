@@ -6,17 +6,13 @@ A cute pixel-art pomodoro timer that lives in a floating always-on-top window. C
   <img src="docs/demo.gif" alt="Claude Pomodoro demo" width="480" />
 </p>
 
-<p align="center">
-  <img src="build/icon.png" alt="Claude Pomodoro icon" width="160" />
-</p>
-
 ## Download
 
 All installers live on the [Releases page](https://github.com/Shawnchee/claude-pomodoro/releases/latest). The app is unsigned on every platform, so expect a one-time security warning on first launch — workarounds are inline below.
 
 ### macOS
 
-Apple Silicon (M1/M2/M3/M4) only. Intel Macs can run it under Rosetta or wait for a future universal build.
+Apple Silicon (M1/M2/M3/M4) on macOS Ventura (13) or newer. Intel Macs can run it under Rosetta or wait for a future universal build.
 
 **Option A — Homebrew (recommended)**
 
@@ -74,21 +70,36 @@ No security prompt — AppImages run as the executing user. To integrate it into
 
 ## Development
 
-Run from source:
+Clone first:
 
 ```bash
 git clone https://github.com/Shawnchee/claude-pomodoro.git
 cd claude-pomodoro
+```
+
+### Windows / Linux (Electron)
+
+```bash
 npm install
 npm start
 ```
+
+### macOS (native SwiftUI)
+
+The Mac DMG ships from `mac-native/`, not Electron. Develop with:
+
+```bash
+cd mac-native
+swift run
+```
+
+`swift run` is fine for UI iteration but skips notifications and the SPM resource bundle that the packaged `.app` uses. To exercise the full flow, see the `.app` assembly recipe in `.github/workflows/release.yml`.
 
 ### Building installers
 
 ```bash
 npm run icon       # regenerate build/icon.png from assets/done.gif
-npm run dist       # build all platforms
-npm run dist:mac   # mac only
+npm run dist       # build for current platform (windows / linux only — mac comes from mac-native/ via CI)
 npm run dist:win   # windows only
 npm run dist:linux # linux only
 ```
@@ -101,6 +112,10 @@ Output goes to `dist/`.
 - **Windows & Linux:** [Electron](https://www.electronjs.org/) + plain HTML/CSS/JS, packaged with [electron-builder](https://www.electron.build/). Ships as ~80–110MB installers.
 
 Both builds render the same UI (cream + orange pixel-art, ~280×380 floating window) and ship from this repo on every `v*` tag push. macOS users can also install via the [Homebrew tap](https://github.com/Shawnchee/homebrew-claude-pomodoro).
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
 ## License
 
