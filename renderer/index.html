@@ -2,43 +2,86 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'" />
     <title>Claude Pomodoro</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="card">
+    <div class="card view-timer" id="card">
       <div class="titlebar">
         <span class="title">claude pomodoro</span>
         <div class="window-controls">
+          <button id="settings-toggle" class="ctrl" title="Settings">&#9881;</button>
           <button id="pin" class="ctrl pinned" title="Currently always on top — click to unpin">pinned</button>
           <button id="minimize" class="ctrl" title="Minimize">–</button>
           <button id="close" class="ctrl" title="Close">×</button>
         </div>
       </div>
 
-      <div class="mascot-wrap">
-        <img id="mascot" src="../assets/done.gif" alt="claude mascot" />
+      <div class="timer-view">
+        <div class="mascot-wrap">
+          <img id="mascot" src="../assets/done.gif" alt="claude mascot" />
+        </div>
+
+        <div class="phase" id="phase">ready</div>
+        <div class="timer" id="timer">25:00</div>
+
+        <div class="durations" id="durations">
+          <button class="dur-btn" data-min="5">5</button>
+          <button class="dur-btn" data-min="15">15</button>
+          <button class="dur-btn active" data-min="25">25</button>
+          <input id="dur-custom" class="dur-input" type="number" min="1" max="180" placeholder="min" />
+        </div>
+
+        <div class="buttons">
+          <button id="start" class="btn primary">start</button>
+          <button id="reset" class="btn">reset</button>
+        </div>
+
+        <div class="sessions">sessions: <span id="sessions">0</span></div>
       </div>
 
-      <div class="phase" id="phase">ready</div>
-      <div class="timer" id="timer">25:00</div>
+      <div class="settings-view">
+        <div class="settings-row">
+          <label class="settings-label">break</label>
+          <div class="settings-controls">
+            <button class="set-btn" data-setting="break" data-min="3">3</button>
+            <button class="set-btn" data-setting="break" data-min="5">5</button>
+            <button class="set-btn" data-setting="break" data-min="10">10</button>
+            <input id="break-custom" class="set-input" type="number" min="1" max="60" placeholder="min" />
+          </div>
+        </div>
 
-      <div class="durations" id="durations">
-        <button class="dur-btn" data-min="5">5</button>
-        <button class="dur-btn" data-min="15">15</button>
-        <button class="dur-btn active" data-min="25">25</button>
-        <input id="dur-custom" class="dur-input" type="number" min="1" max="180" placeholder="min" />
+        <div class="settings-row">
+          <label class="settings-label">long break</label>
+          <div class="settings-controls">
+            <button class="set-btn" data-setting="long" data-min="10">10</button>
+            <button class="set-btn" data-setting="long" data-min="15">15</button>
+            <button class="set-btn" data-setting="long" data-min="20">20</button>
+            <input id="long-custom" class="set-input" type="number" min="1" max="60" placeholder="min" />
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <label class="settings-label">long break every</label>
+          <div class="settings-controls">
+            <button class="set-btn" data-setting="cycle" data-n="3">3</button>
+            <button class="set-btn" data-setting="cycle" data-n="4">4</button>
+            <button class="set-btn" data-setting="cycle" data-n="5">5</button>
+            <input id="cycle-custom" class="set-input" type="number" min="1" max="20" placeholder="n" />
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <label class="settings-label">sound</label>
+          <div class="settings-controls">
+            <button id="sound-toggle" class="set-btn toggle">on</button>
+          </div>
+        </div>
       </div>
-
-      <div class="buttons">
-        <button id="start" class="btn primary">start</button>
-        <button id="reset" class="btn">reset</button>
-      </div>
-
-      <div class="sessions">sessions: <span id="sessions">0</span></div>
     </div>
 
+    <audio id="ding" src="../assets/celebratory.wav" preload="auto"></audio>
     <script src="timer.js"></script>
   </body>
 </html>

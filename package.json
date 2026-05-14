@@ -1,6 +1,6 @@
 {
   "name": "claude-pomodoro",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "A cute pixel-art Claude mascot pomodoro timer for Windows, macOS, and Linux.",
   "main": "main.js",
   "scripts": {
@@ -39,7 +39,12 @@
     ],
     "mac": {
       "target": [
-        { "target": "dmg", "arch": ["arm64"] }
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        }
       ],
       "icon": "build/icon.png",
       "category": "public.app-category.productivity"
@@ -57,11 +62,19 @@
     },
     "linux": {
       "target": [
-        { "target": "AppImage", "arch": ["x64"] }
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
       "icon": "build/icon.png",
       "category": "Utility",
       "artifactName": "Claude-Pomodoro-${version}.${ext}"
     }
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0"
   }
 }

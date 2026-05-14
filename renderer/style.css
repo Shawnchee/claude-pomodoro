@@ -27,6 +27,20 @@ body {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
+.card.view-timer .settings-view,
+.card.view-settings .timer-view {
+  display: none;
+}
+
+.timer-view,
+.settings-view {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
 .titlebar {
   -webkit-app-region: drag;
   width: 100%;
@@ -221,3 +235,90 @@ body {
   color: #b06545;
   opacity: 0.7;
 }
+
+#settings-toggle {
+  font-size: 13px;
+  line-height: 1;
+}
+
+#settings-toggle.active {
+  background: rgba(217, 119, 87, 0.18);
+  color: #d97757;
+}
+
+.settings-view {
+  -webkit-app-region: no-drag;
+  gap: 10px;
+  justify-content: center;
+}
+
+.settings-row {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.settings-label {
+  font-size: 10px;
+  color: #b06545;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-controls {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.set-btn {
+  padding: 3px 8px;
+  border: 1.5px solid #d97757;
+  background: #fdf6ec;
+  color: #d97757;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: lowercase;
+}
+
+.set-btn:hover {
+  background: rgba(217, 119, 87, 0.12);
+}
+
+.set-btn.active {
+  background: #d97757;
+  color: #fdf6ec;
+}
+
+.set-btn.toggle {
+  min-width: 44px;
+}
+
+.set-input {
+  width: 56px;
+  padding: 3px 6px;
+  border: 1.5px solid #d97757;
+  background: #fdf6ec;
+  color: #d97757;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  text-align: center;
+  outline: none;
+}
+
+.set-input::placeholder {
+  color: #d97757;
+  opacity: 0.5;
+}
+
+.set-input:focus {
+  background: #fff;
+}
+

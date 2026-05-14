@@ -1,5 +1,21 @@
 const { app, BrowserWindow, ipcMain, Notification } = require('electron');
 const path = require('path');
+const Store = require('electron-store');
+
+const store = new Store({
+  defaults: {
+    workMinutes: 25,
+    breakMinutes: 5,
+    longBreakMinutes: 15,
+    sessionsBeforeLongBreak: 4,
+    soundEnabled: true,
+    pinned: true,
+  },
+});
+
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.shawnchee.claudepomodoro');
+}
 
 let mainWindow;
 
@@ -10,7 +26,7 @@ function createWindow() {
     resizable: false,
     frame: false,
     transparent: true,
-    alwaysOnTop: true,
+    alwaysOnTop: store.get('pinned'),
     hasShadow: false,
     backgroundColor: '#00000000',
     webPreferences: {
@@ -43,6 +59,11 @@ ipcMain.on('window:setAlwaysOnTop', (_event, flag) => {
 
 ipcMain.on('notify', (_event, { title, body }) => {
   if (Notification.isSupported()) {
-    new Notification({ title, body, silent: false }).show();
+    new Notification({ title, body, silent: !store.get('soundEnabled') }).show();
   }
+});
+
+ipcMain.handle('settings:get', () => store.store);
+ipcMain.on('settings:set', (_event, { key, value }) => {
+  store.set(key, value);
 });

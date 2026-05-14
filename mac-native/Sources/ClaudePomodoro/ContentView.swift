@@ -7,10 +7,31 @@ private let darkOrange = Color(red: 0xB0/255, green: 0x65/255, blue: 0x45/255)
 struct ContentView: View {
     @EnvironmentObject var model: TimerModel
     @State private var customInput: String = ""
+    @State private var showSettings: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
             titlebar
+            if showSettings {
+                SettingsBody()
+            } else {
+                timerBody
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(cream)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(orange, lineWidth: 3)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+    }
+
+    private var timerBody: some View {
+        VStack(spacing: 0) {
             mascot
             Text(model.phaseLabel)
                 .font(.system(size: 11))
@@ -27,24 +48,23 @@ struct ContentView: View {
                 .font(.system(size: 10))
                 .foregroundColor(darkOrange.opacity(0.7))
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 8)
-        .padding(.bottom, 16)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(cream)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(orange, lineWidth: 3)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
     private var titlebar: some View {
         HStack {
-            Text("claude pomodoro")
+            Text(showSettings ? "settings" : "claude pomodoro")
                 .font(.system(size: 11))
                 .foregroundColor(darkOrange)
             Spacer()
+            Button("\u{2699}") {
+                showSettings.toggle()
+            }
+            .buttonStyle(.plain)
+            .font(.system(size: 13))
+            .foregroundColor(showSettings ? orange : darkOrange.opacity(0.7))
+            .frame(width: 18, height: 18)
+            .background(showSettings ? orange.opacity(0.18) : .clear)
+            .cornerRadius(4)
             Button(model.pinned ? "pinned" : "pin") {
                 model.togglePin()
             }
@@ -162,3 +182,125 @@ struct ContentView: View {
         .padding(.bottom, 10)
     }
 }
+
+private struct SettingsBody: View {
+    @EnvironmentObject var model: TimerModel
+    @State private var breakCustom: String = ""
+    @State private var longBreakCustom: String = ""
+    @State private var cycleCustom: String = ""
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Spacer(minLength: 0)
+            VStack(spacing: 10) {
+                settingRow(
+                    label: "break",
+                    presets: [3, 5, 10],
+                    current: model.breakMinutes,
+                    customText: $breakCustom,
+                    placeholder: "min",
+                    range: 1...60
+                ) { model.setBreakMinutes($0) }
+
+                settingRow(
+                    label: "long break",
+                    presets: [10, 15, 20],
+                    current: model.longBreakMinutes,
+                    customText: $longBreakCustom,
+                    placeholder: "min",
+                    range: 1...60
+                ) { model.setLongBreakMinutes($0) }
+
+                settingRow(
+                    label: "long break every",
+                    presets: [3, 4, 5],
+                    current: model.sessionsBeforeLongBreak,
+                    customText: $cycleCustom,
+                    placeholder: "n",
+                    range: 1...20
+                ) { model.setSessionsBeforeLongBreak($0) }
+
+                VStack(spacing: 4) {
+                    Text("sound")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(darkOrange)
+                    Button(model.soundEnabled ? "on" : "off") {
+                        model.toggleSound()
+                    }
+                    .buttonStyle(.plain)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(model.soundEnabled ? cream : orange)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 3)
+                    .background(model.soundEnabled ? orange : cream)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(orange, lineWidth: 1.5)
+                    )
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func settingRow(
+        label: String,
+        presets: [Int],
+        current: Int,
+        customText: Binding<String>,
+        placeholder: String,
+        range: ClosedRange<Int>,
+        apply: @escaping (Int) -> Void
+    ) -> some View {
+        VStack(spacing: 4) {
+            Text(label)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundColor(darkOrange)
+            HStack(spacing: 4) {
+                ForEach(presets, id: \.self) { v in
+                    let isActive = current == v && customText.wrappedValue.isEmpty
+                    Button("\(v)") {
+                        customText.wrappedValue = ""
+                        apply(v)
+                    }
+                    .buttonStyle(.plain)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(isActive ? cream : orange)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(isActive ? orange : cream)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(orange, lineWidth: 1.5)
+                    )
+                }
+                ZStack {
+                    if customText.wrappedValue.isEmpty {
+                        Text(placeholder)
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(orange.opacity(0.5))
+                            .allowsHitTesting(false)
+                    }
+                    TextField("", text: customText)
+                        .textFieldStyle(.plain)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(orange)
+                }
+                .frame(width: 50, height: 22)
+                .background(cream)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(orange, lineWidth: 1.5)
+                )
+                .onChange(of: customText.wrappedValue) { newValue in
+                    if let n = Int(newValue), range.contains(n) {
+                        apply(n)
+                    }
+                }
+            }
+        }
+    }
+}
+

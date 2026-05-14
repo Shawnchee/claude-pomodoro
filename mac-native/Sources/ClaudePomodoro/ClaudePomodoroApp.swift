@@ -4,12 +4,15 @@ import AppKit
 
 @main
 struct ClaudePomodoroApp: App {
-    @StateObject private var model = TimerModel()
+    @StateObject private var model: TimerModel
 
     init() {
+        let m = TimerModel()
+        _model = StateObject(wrappedValue: m)
         // UNUserNotificationCenter requires a real .app bundle. Skip when running
         // the bare executable via `swift run` (Bundle.main has no bundleIdentifier).
         if Bundle.main.bundleIdentifier != nil {
+            UNUserNotificationCenter.current().delegate = m
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
         }
     }

@@ -9,7 +9,8 @@ let package = Package(
             name: "ClaudePomodoro",
             resources: [
                 .copy("Resources/work.gif"),
-                .copy("Resources/done.gif")
+                .copy("Resources/done.gif"),
+                .copy("Resources/celebratory.wav")
             ]
         )
     ]
