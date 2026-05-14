@@ -3,7 +3,7 @@
 A cute pixel-art pomodoro timer that lives in a floating always-on-top window. Cross-platform: macOS, Windows, Linux.
 
 <p align="center">
-  <video src="https://github.com/Shawnchee/claude-pomodoro/raw/master/docs/demo.mov" controls muted width="480"></video>
+  <video src="https://github.com/Shawnchee/claude-pomodoro/raw/master/docs/demo.mp4" controls muted width="480"></video>
 </p>
 
 <p align="center">
