@@ -3,6 +3,10 @@
 A cute pixel-art pomodoro timer that lives in a floating always-on-top window. Cross-platform: macOS, Windows, Linux.
 
 <p align="center">
+  <video src="https://github.com/Shawnchee/claude-pomodoro/raw/master/docs/demo.mov" controls muted width="480"></video>
+</p>
+
+<p align="center">
   <img src="build/icon.png" alt="Claude Pomodoro icon" width="160" />
 </p>
 
@@ -57,13 +61,15 @@ chmod +x Claude-Pomodoro-*.AppImage
 
 No security prompt — AppImages run as the executing user. To integrate it into your application menu, use a tool like [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher).
 
-## Features (v0.1)
+## Features
 
-- 25-minute focus / 5-minute break cycles
+- Configurable focus, break, and long-break durations (presets + free-form custom)
+- Long break every N sessions (classic pomodoro cycle, default every 4)
 - Start / pause / reset
 - Always-on-top floating window (drag from the title bar)
 - Pixel-art mascot — hammers during focus, idles during break
-- Native OS notifications when phases switch
+- Native OS notifications when phases switch (with an optional chime)
+- Settings persist across restarts — duration, cycle, sound, pin state
 - Session counter
 
 ## Development
