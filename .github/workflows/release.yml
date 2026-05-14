@@ -69,6 +69,27 @@ jobs:
             exit 1
           fi
 
+          # Generate AppIcon.icns from build/icon.png (1024x1024).
+          # macOS Finder/Launchpad/Dock look up the icon via the
+          # CFBundleIconFile key in Info.plist (added below) which points to
+          # this file in Contents/Resources/. Without this, the .app shows
+          # the generic blank document icon everywhere.
+          ICONSET="build/AppIcon.iconset"
+          ICON_SRC="../build/icon.png"
+          mkdir -p "$ICONSET"
+          sips -z 16 16     "$ICON_SRC" --out "$ICONSET/icon_16x16.png"      > /dev/null
+          sips -z 32 32     "$ICON_SRC" --out "$ICONSET/icon_16x16@2x.png"   > /dev/null
+          sips -z 32 32     "$ICON_SRC" --out "$ICONSET/icon_32x32.png"      > /dev/null
+          sips -z 64 64     "$ICON_SRC" --out "$ICONSET/icon_32x32@2x.png"   > /dev/null
+          sips -z 128 128   "$ICON_SRC" --out "$ICONSET/icon_128x128.png"    > /dev/null
+          sips -z 256 256   "$ICON_SRC" --out "$ICONSET/icon_128x128@2x.png" > /dev/null
+          sips -z 256 256   "$ICON_SRC" --out "$ICONSET/icon_256x256.png"    > /dev/null
+          sips -z 512 512   "$ICON_SRC" --out "$ICONSET/icon_256x256@2x.png" > /dev/null
+          sips -z 512 512   "$ICON_SRC" --out "$ICONSET/icon_512x512.png"    > /dev/null
+          cp "$ICON_SRC" "$ICONSET/icon_512x512@2x.png"
+          iconutil -c icns "$ICONSET" -o "$RES_DIR/AppIcon.icns"
+          rm -rf "$ICONSET"
+
           # Write Info.plist
           cat > "$CONTENTS/Info.plist" <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
@@ -79,6 +100,8 @@ jobs:
             <string>en</string>
             <key>CFBundleExecutable</key>
             <string>ClaudePomodoro</string>
+            <key>CFBundleIconFile</key>
+            <string>AppIcon</string>
             <key>CFBundleIdentifier</key>
             <string>${BUNDLE_ID}</string>
             <key>CFBundleInfoDictionaryVersion</key>
